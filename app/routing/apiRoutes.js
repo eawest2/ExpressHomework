@@ -13,32 +13,39 @@ module.exports = function (app) {
 
     //Post requests
 
-    app.post("/api/users", function (req,res) {
-        users.push(req.body);
-        console.log(req);
+    app.post("/api/users", function(req, res) {
+        console.log("New Entry: " + JSON.stringify(req.body));
+        var newEntry = req.body;
+        var entryScores = newEntry.scores;
+        var totalDiffArr = []
+        var lowest = 51;
+        var matchName;
+        var matchPhoto;
 
-        var differenceArr = [];
+        for (var i = 0; i < users.length; i++) {
+            var totalDiff = 0;
+            for (var j = 0; j < entryScores.length; j++) {
+            totalDiff += Math.abs(Number(users[i].scores[j]) - Number(entryScores[j]));
+            }
+            console.log(totalDiff);
 
-        for (var i = 0; i<users.length; i++){
-            var working = users[i]
+            totalDiffArr.push(totalDiff);
+            console.log("totalDiffArr: " + totalDiffArr);
 
-            var difference = (Math.abs(working.scores[1] - req.scores[1]) +
-            Math.abs(working.scores[2] - req.scores[2]) +
-            Math.abs(working.scores[3] - req.scores[3]) +
-            Math.abs(working.scores[4] - req.scores[4]) +
-            Math.abs(working.scores[5] - req.scores[5]) +
-            Math.abs(working.scores[6] - req.scores[6]) +
-            Math.abs(working.scores[7] - req.scores[7]) +
-            Math.abs(working.scores[8] - req.scores[8]) +
-            Math.abs(working.scores[9] - req.scores[9]) +
-            Math.abs(working.scores[10] - req.scores[10]));
-
-            differenceArr.push(difference);
-
+            if (totalDiff < lowest) {
+            lowest = totalDiff;
+            matchName = users[i].name;
+            matchPhoto = users[i].photo;
+            console.log(matchName);
+            console.log(matchPhoto);
+            }
         }
-        
-        
-        
-        res.json()
-    });
+        //***** When you send it back to the front end, it has to use the properties name and photo since that is what you are using in the front end when you do data.name and data.photo. It is expecting to find name and photo. It also has to be returned as an object *****
+        var match = {
+            name: matchName,
+            photo: matchPhoto
+        }
+        console.log(match);
+        res.json(match);
+        });
 };
