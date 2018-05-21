@@ -50,7 +50,8 @@ function generateMatch (req, res){
             name: matchName,
             photo: matchPhoto
         };
-
+        
+        users.push(newEntry);
         res.json(match);
         console.log(match);
 }
